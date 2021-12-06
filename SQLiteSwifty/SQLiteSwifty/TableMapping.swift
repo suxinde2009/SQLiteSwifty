@@ -137,11 +137,11 @@ extension SQLite {
 extension SQLite.TableMapping.Column {
     
     var declaration: String {
-        var decl = "'\(name)' \(SQLType) "
+        var decl = "'\(name)' \(sqlType) "
         if isPK {
             decl += "PRIMARY KEY "
         }
-        if isAutoInc && SQLType == SQLite.DataType.INTEGER.rawValue {
+        if isAutoInc && sqlType == SQLite.DataType.INTEGER.rawValue {
             decl += "AUTOINCREMENT "
         }
         if !isNullable {
@@ -150,7 +150,7 @@ extension SQLite.TableMapping.Column {
         return decl
     }
     
-    fileprivate var SQLType: String {
+    fileprivate var sqlType: String {
         let mappings: [String: [Any.Type]] = [
             "INTEGER": [
                 Int.self, Int?.self,

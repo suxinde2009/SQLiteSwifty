@@ -266,4 +266,8 @@ internal extension SQLite {
     static func libVersion() -> String {
         return String(cString: sqlite3_libversion())
     }
+    
+    static func isThreadSafe() -> Bool {
+        return sqlite3_threadsafe() != 0
+    }
 }

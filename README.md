@@ -1,2 +1,2 @@
 # SQLiteSwifty
-An SQLite3 ORM library implemented in Swift 5.
+An SQLite3 ORM library implemented in Swift 5. WIP...

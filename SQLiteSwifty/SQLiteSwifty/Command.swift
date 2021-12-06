@@ -24,14 +24,14 @@ internal extension SQLite {
             }
         }
         
-        fileprivate let conn: Connection
+        fileprivate let connection: Connection
         
         fileprivate var _bindings: [Binding] = []
         
         var commandText: String = ""
         
         init(connection: Connection) {
-            conn = connection
+            self.connection = connection
         }
         
         func bind(_ name: String?,
@@ -127,8 +127,8 @@ internal extension SQLite {
         }
         
         func prepare() throws -> SQLite.Statement {
-            guard let stmt = SQLite.prepare(conn.handle, SQL: commandText) else {
-                let msg = SQLite.getErrorMessage(conn.handle)
+            guard let stmt = SQLite.prepare(connection.handle, SQL: commandText) else {
+                let msg = SQLite.getErrorMessage(connection.handle)
                 throw SQLite.ErrorType.prepareError(msg)
             }
             try bindAll(stmt)
@@ -147,7 +147,7 @@ internal extension SQLite {
                 SQLite.finalize(stmt)
                 return value
             } else {
-                let msg = SQLite.getErrorMessage(conn.handle)
+                let msg = SQLite.getErrorMessage(connection.handle)
                 throw SQLite.ErrorType.executeError(Int(r.rawValue), msg)
             }
         }
@@ -160,20 +160,20 @@ internal extension SQLite {
             }
             SQLite.finalize(stmt)
             if r == SQLite.Result.done {
-                let rowsAffected = SQLite.changes(conn.handle)
+                let rowsAffected = SQLite.changes(connection.handle)
                 return rowsAffected
             } else if r == SQLite.Result.error {
-                let msg = SQLite.getErrorMessage(conn.handle)
+                let msg = SQLite.getErrorMessage(connection.handle)
                 throw SQLite.ErrorType.executeError(Int(r.rawValue), msg)
             } else if r == SQLite.Result.constraint {
-                let msg = SQLite.getErrorMessage(conn.handle)
+                let msg = SQLite.getErrorMessage(connection.handle)
                 throw SQLite.ErrorType.notNullConstraintViolation(Int(r.rawValue), msg)
             }
             throw SQLite.ErrorType.executeError(Int(r.rawValue), "")
         }
         
         func executeQuery<T: SQLiteCodable>() -> [T] {
-            let map = conn.getMapping(of: T.self)
+            let map = connection.getMapping(of: T.self)
             do {
                 return try executeDeferredQuery(map)
             } catch {
